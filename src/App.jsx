@@ -101,7 +101,91 @@ function getCategoryMeta(name) {
   return CATEGORIES.find((c) => c.name === name) || CATEGORIES[7];
 }
 
+// ─── Theme tokens ───────────────────────────────────────────────────────────
+function getTheme(dark) {
+  return dark
+    ? {
+        appBg: "#070B14",
+        sidebarBg: "#0B1120",
+        sidebarBorder: "#1E293B",
+        cardBg: "#0B1120",
+        cardBorder: "#1E293B",
+        inputBg: "#0F172A",
+        inputBorder: "#1E293B",
+        inputColor: "#E2E8F0",
+        inputPlaceholder: "#334155",
+        textPrimary: "#fff",
+        textSecondary: "#E2E8F0",
+        textMuted: "#64748B",
+        textDim: "#475569",
+        textMid: "#94A3B8",
+        textBody: "#CBD5E1",
+        navActive: "#1E293B",
+        navActiveText: "#E2E8F0",
+        progressBg: "#1E293B",
+        barBg: "#1E293B",
+        barMonthInactive: "#1E293B",
+        deleteBtn: "#1E293B",
+        deleteBtnColor: "#64748B",
+        txHover: "#0F172A",
+        listRowBorder: "#1E293B",
+        modalBg: "#0B1120",
+        modalBorder: "#1E293B",
+        btnOutlineBorder: "#334155",
+        btnOutlineColor: "#94A3B8",
+        scrollTrack: "#070B14",
+        scrollThumb: "#1E293B",
+        selectOptionBg: "#0F172A",
+        logoText: "#fff",
+        toggleBg: "#1E293B",
+        toggleColor: "#A78BFA",
+        toggleIcon: "☀️",
+        toggleLabel: "Light",
+      }
+    : {
+        appBg: "#F1F5F9",
+        sidebarBg: "#fff",
+        sidebarBorder: "#E2E8F0",
+        cardBg: "#fff",
+        cardBorder: "#E2E8F0",
+        inputBg: "#F8FAFC",
+        inputBorder: "#CBD5E1",
+        inputColor: "#1E293B",
+        inputPlaceholder: "#94A3B8",
+        textPrimary: "#0F172A",
+        textSecondary: "#1E293B",
+        textMuted: "#64748B",
+        textDim: "#64748B",
+        textMid: "#475569",
+        textBody: "#334155",
+        navActive: "#F1F5F9",
+        navActiveText: "#0F172A",
+        progressBg: "#E2E8F0",
+        barBg: "#E2E8F0",
+        barMonthInactive: "#E2E8F0",
+        deleteBtn: "#F1F5F9",
+        deleteBtnColor: "#94A3B8",
+        txHover: "#F8FAFC",
+        listRowBorder: "#E2E8F0",
+        modalBg: "#fff",
+        modalBorder: "#E2E8F0",
+        btnOutlineBorder: "#CBD5E1",
+        btnOutlineColor: "#64748B",
+        scrollTrack: "#F1F5F9",
+        scrollThumb: "#CBD5E1",
+        selectOptionBg: "#fff",
+        logoText: "#0F172A",
+        toggleBg: "#F1F5F9",
+        toggleColor: "#6D28D9",
+        toggleIcon: "🌙",
+        toggleLabel: "Dark",
+      };
+}
+
 export default function ExpenseTracker() {
+  const [dark, setDark] = useState(true);
+  const t = getTheme(dark);
+
   const [expenses, setExpenses] = useState(initialExpenses);
   const [view, setView] = useState("dashboard");
   const [filterCat, setFilterCat] = useState("All");
@@ -218,15 +302,407 @@ export default function ExpenseTracker() {
 
   const maxCatAmount = categoryTotals.length ? categoryTotals[0][1] : 1;
 
+  // ── Dynamic styles (theme-aware) ────────────────────────────────────────
+  const s = {
+    app: {
+      display: "flex",
+      minHeight: "100vh",
+      background: t.appBg,
+      fontFamily: "'DM Sans', sans-serif",
+      color: t.textSecondary,
+      transition: "background 0.3s, color 0.3s",
+    },
+    sidebar: {
+      width: 240,
+      background: t.sidebarBg,
+      borderRight: `1px solid ${t.sidebarBorder}`,
+      display: "flex",
+      flexDirection: "column",
+      padding: "28px 16px",
+      position: "sticky",
+      top: 0,
+      height: "100vh",
+      gap: 8,
+      transition: "background 0.3s",
+    },
+    logo: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 32,
+      paddingLeft: 8,
+    },
+    logoIcon: { fontSize: 28 },
+    logoText: {
+      fontSize: 22,
+      fontWeight: 700,
+      color: t.logoText,
+      fontFamily: "'Playfair Display', serif",
+      letterSpacing: -0.5,
+    },
+    nav: { display: "flex", flexDirection: "column", gap: 4 },
+    navBtn: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      padding: "10px 12px",
+      borderRadius: 10,
+      background: "transparent",
+      border: "none",
+      color: t.textMuted,
+      cursor: "pointer",
+      fontSize: 14,
+      fontWeight: 500,
+      textAlign: "left",
+      transition: "all 0.2s",
+    },
+    navBtnActive: { background: t.navActive, color: t.navActiveText },
+    navIcon: { fontSize: 16, width: 20 },
+    sidebarCard: {
+      marginTop: "auto",
+      background: t.inputBg,
+      borderRadius: 12,
+      padding: 16,
+      border: `1px solid ${t.sidebarBorder}`,
+    },
+    progressBar: {
+      height: 4,
+      background: t.progressBg,
+      borderRadius: 99,
+      marginTop: 10,
+      overflow: "hidden",
+    },
+    progressFill: {
+      height: "100%",
+      background: "linear-gradient(90deg,#6EE7B7,#059669)",
+      borderRadius: 99,
+      transition: "width 0.6s ease",
+    },
+    main: {
+      flex: 1,
+      padding: "32px 36px",
+      overflowY: "auto",
+      maxWidth: "100%",
+    },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: 32,
+    },
+    headerLeft: { display: "flex", flexDirection: "column" },
+    pageTitle: {
+      margin: 0,
+      fontSize: 28,
+      fontWeight: 700,
+      color: t.textPrimary,
+      fontFamily: "'Playfair Display', serif",
+      letterSpacing: -0.5,
+    },
+    pageSubtitle: { margin: "4px 0 0", color: t.textDim, fontSize: 13 },
+    headerRight: { display: "flex", alignItems: "center", gap: 12 },
+    toggleBtn: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      background: t.toggleBg,
+      border: `1.5px solid ${t.sidebarBorder}`,
+      borderRadius: 10,
+      padding: "8px 14px",
+      color: t.toggleColor,
+      fontSize: 13,
+      fontWeight: 600,
+      cursor: "pointer",
+      transition: "all 0.2s",
+      fontFamily: "'DM Sans', sans-serif",
+    },
+    addBtn: {
+      background: "linear-gradient(135deg,#6D28D9,#A78BFA)",
+      border: "none",
+      borderRadius: 10,
+      padding: "10px 20px",
+      color: "#fff",
+      fontSize: 13,
+      fontWeight: 600,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    },
+    statsRow: {
+      display: "grid",
+      gridTemplateColumns: "repeat(4,1fr)",
+      gap: 16,
+      marginBottom: 24,
+    },
+    statCard: {
+      background: t.cardBg,
+      border: `1px solid ${t.cardBorder}`,
+      borderRadius: 16,
+      padding: 20,
+      transition: "transform 0.2s, border-color 0.2s, background 0.3s",
+    },
+    statLabel: {
+      color: t.textMuted,
+      fontSize: 12,
+      margin: "0 0 6px",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    statValue: {
+      fontSize: 22,
+      fontWeight: 700,
+      margin: "0 0 4px",
+      fontFamily: "'Playfair Display', serif",
+    },
+    statSub: { color: t.textDim, fontSize: 11, margin: 0 },
+    statIcon: {
+      fontSize: 20,
+      width: 40,
+      height: 40,
+      borderRadius: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    twoCol: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 20,
+      marginBottom: 24,
+    },
+    card: {
+      background: t.cardBg,
+      border: `1px solid ${t.cardBorder}`,
+      borderRadius: 16,
+      padding: 24,
+      marginBottom: 24,
+      transition: "background 0.3s",
+    },
+    cardTitle: {
+      margin: "0 0 20px",
+      fontSize: 16,
+      fontWeight: 600,
+      color: t.textSecondary,
+    },
+    catDot: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 14,
+    },
+    barBg: {
+      height: 4,
+      background: t.barBg,
+      borderRadius: 99,
+      overflow: "hidden",
+    },
+    barFill: {
+      height: "100%",
+      borderRadius: 99,
+      transition: "width 0.6s ease",
+    },
+    linkBtn: {
+      background: "none",
+      border: "none",
+      color: "#A78BFA",
+      cursor: "pointer",
+      fontSize: 13,
+      padding: 0,
+    },
+    txRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      padding: "10px 0",
+      cursor: "default",
+      transition: "all 0.15s",
+      borderRadius: 8,
+    },
+    txIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 18,
+      flexShrink: 0,
+    },
+    txTitle: { margin: 0, color: t.textBody, fontSize: 13, fontWeight: 500 },
+    txMeta: { margin: "2px 0 0", color: t.textDim, fontSize: 11 },
+    label: {
+      display: "block",
+      marginBottom: 6,
+      color: t.textMid,
+      fontSize: 12,
+      fontWeight: 500,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    input: {
+      width: "100%",
+      background: t.inputBg,
+      border: `1.5px solid ${t.inputBorder}`,
+      borderRadius: 10,
+      padding: "11px 14px",
+      color: t.inputColor,
+      fontSize: 14,
+      outline: "none",
+      boxSizing: "border-box",
+      fontFamily: "'DM Sans', sans-serif",
+      transition: "background 0.3s, border 0.3s, color 0.3s",
+    },
+    inputError: { borderColor: "#FF6B6B" },
+    inputPrefix: {
+      position: "absolute",
+      left: 12,
+      top: "50%",
+      transform: "translateY(-50%)",
+      color: t.textMuted,
+      fontSize: 15,
+    },
+    errText: { color: "#FF6B6B", fontSize: 11, margin: "4px 0 0" },
+    catGrid: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 },
+    catBtn: {
+      border: `1.5px solid ${t.inputBorder}`,
+      borderRadius: 10,
+      padding: "10px 4px",
+      cursor: "pointer",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 4,
+      transition: "all 0.2s",
+      fontFamily: "'DM Sans', sans-serif",
+    },
+    submitBtn: {
+      background: "linear-gradient(135deg,#6D28D9,#A78BFA)",
+      border: "none",
+      borderRadius: 12,
+      padding: "14px",
+      color: "#fff",
+      fontSize: 15,
+      fontWeight: 600,
+      cursor: "pointer",
+      width: "100%",
+      letterSpacing: 0.3,
+    },
+    filterBar: {
+      display: "flex",
+      gap: 12,
+      marginBottom: 16,
+      alignItems: "center",
+      flexWrap: "wrap",
+    },
+    listRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: 14,
+      padding: "14px 0",
+    },
+    catTag: {
+      fontSize: 11,
+      padding: "2px 8px",
+      borderRadius: 99,
+      fontWeight: 500,
+    },
+    deleteBtn: {
+      background: t.deleteBtn,
+      border: "none",
+      color: t.deleteBtnColor,
+      cursor: "pointer",
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      fontSize: 12,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "all 0.2s",
+    },
+    toast: {
+      position: "fixed",
+      bottom: 24,
+      right: 24,
+      padding: "12px 20px",
+      borderRadius: 10,
+      fontSize: 13,
+      fontWeight: 600,
+      zIndex: 9999,
+      boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+      animation: "slideUp 0.3s ease",
+    },
+    modalOverlay: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.7)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9998,
+      backdropFilter: "blur(4px)",
+    },
+    modal: {
+      background: t.modalBg,
+      border: `1px solid ${t.modalBorder}`,
+      borderRadius: 20,
+      padding: "32px 40px",
+      textAlign: "center",
+      maxWidth: 320,
+    },
+    btnOutline: {
+      flex: 1,
+      background: "transparent",
+      border: `1.5px solid ${t.btnOutlineBorder}`,
+      borderRadius: 10,
+      padding: "10px",
+      color: t.btnOutlineColor,
+      cursor: "pointer",
+      fontSize: 14,
+      fontFamily: "'DM Sans', sans-serif",
+    },
+    btnDanger: {
+      flex: 1,
+      background: "#FF6B6B",
+      border: "none",
+      borderRadius: 10,
+      padding: "10px",
+      color: "#fff",
+      cursor: "pointer",
+      fontSize: 14,
+      fontWeight: 600,
+      fontFamily: "'DM Sans', sans-serif",
+    },
+  };
+
+  const globalStyles = `
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .fade-in { animation: fadeIn 0.35s ease; }
+    @keyframes fadeIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    .stat-card:hover { transform: translateY(-2px); }
+    .tx-row:hover { background: ${t.txHover}; padding-left: 8px; padding-right: 8px; }
+    input[type=date]::-webkit-calendar-picker-indicator { filter: ${dark ? "invert(0.5)" : "invert(0.3)"}; cursor: pointer; }
+    select option { background: ${t.selectOptionBg}; color: ${t.inputColor}; }
+    input::placeholder, textarea::placeholder { color: ${t.inputPlaceholder}; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: ${t.scrollTrack}; }
+    ::-webkit-scrollbar-thumb { background: ${t.scrollThumb}; border-radius: 99px; }
+  `;
+
   return (
-    <div style={styles.app}>
+    <div style={s.app}>
       <style>{globalStyles}</style>
 
-      {/* Toast Notification */}
+      {/* Toast */}
       {toast && (
         <div
           style={{
-            ...styles.toast,
+            ...s.toast,
             background: toast.type === "error" ? "#FF6B6B" : "#6EE7B7",
             color: "#111",
           }}
@@ -235,26 +711,25 @@ export default function ExpenseTracker() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {deleteId && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modal}>
+        <div style={s.modalOverlay}>
+          <div style={s.modal}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
-            <h3 style={{ margin: "0 0 8px", color: "#fff", fontSize: 18 }}>
+            <h3
+              style={{ margin: "0 0 8px", color: t.textPrimary, fontSize: 18 }}
+            >
               Delete Expense?
             </h3>
-            <p style={{ color: "#94A3B8", margin: "0 0 24px", fontSize: 14 }}>
+            <p style={{ color: t.textMid, margin: "0 0 24px", fontSize: 14 }}>
               This action cannot be undone.
             </p>
             <div style={{ display: "flex", gap: 12 }}>
-              <button
-                style={styles.btnOutline}
-                onClick={() => setDeleteId(null)}
-              >
+              <button style={s.btnOutline} onClick={() => setDeleteId(null)}>
                 Cancel
               </button>
               <button
-                style={styles.btnDanger}
+                style={s.btnDanger}
                 onClick={() => handleDelete(deleteId)}
               >
                 Delete
@@ -265,13 +740,13 @@ export default function ExpenseTracker() {
       )}
 
       {/* ── Sidebar ── */}
-      <aside style={styles.sidebar}>
-        <div style={styles.logo}>
-          <span style={styles.logoIcon}>💰</span>
-          <span style={styles.logoText}>Spendly</span>
+      <aside style={s.sidebar}>
+        <div style={s.logo}>
+          <span style={s.logoIcon}>💰</span>
+          <span style={s.logoText}>Spendly</span>
         </div>
 
-        <nav style={styles.nav}>
+        <nav style={s.nav}>
           {[
             { id: "dashboard", icon: "◈", label: "Dashboard" },
             { id: "add", icon: "＋", label: "Add Expense" },
@@ -280,21 +755,21 @@ export default function ExpenseTracker() {
             <button
               key={item.id}
               style={{
-                ...styles.navBtn,
-                ...(view === item.id ? styles.navBtnActive : {}),
+                ...s.navBtn,
+                ...(view === item.id ? s.navBtnActive : {}),
               }}
               onClick={() => setView(item.id)}
             >
-              <span style={styles.navIcon}>{item.icon}</span>
+              <span style={s.navIcon}>{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
         </nav>
 
-        <div style={styles.sidebarCard}>
+        <div style={s.sidebarCard}>
           <p
             style={{
-              color: "#64748B",
+              color: t.textMuted,
               fontSize: 11,
               textTransform: "uppercase",
               letterSpacing: 1,
@@ -314,33 +789,33 @@ export default function ExpenseTracker() {
           >
             {formatINR(Math.max(0, 25000 - thisMonth))}
           </p>
-          <div style={styles.progressBar}>
+          <div style={s.progressBar}>
             <div
               style={{
-                ...styles.progressFill,
+                ...s.progressFill,
                 width: `${Math.min((thisMonth / 25000) * 100, 100)}%`,
               }}
             />
           </div>
-          <p style={{ color: "#64748B", fontSize: 11, margin: "6px 0 0" }}>
+          <p style={{ color: t.textMuted, fontSize: 11, margin: "6px 0 0" }}>
             {formatINR(thisMonth)} of ₹25,000 used
           </p>
         </div>
       </aside>
 
-      {/* ── Main Content ── */}
-      <main style={styles.main}>
+      {/* ── Main ── */}
+      <main style={s.main}>
         {/* Header */}
-        <header style={styles.header}>
-          <div>
-            <h1 style={styles.pageTitle}>
+        <header style={s.header}>
+          <div style={s.headerLeft}>
+            <h1 style={s.pageTitle}>
               {view === "dashboard"
                 ? "Overview"
                 : view === "add"
                   ? "New Expense"
                   : "Transactions"}
             </h1>
-            <p style={styles.pageSubtitle}>
+            <p style={s.pageSubtitle}>
               {new Date().toLocaleDateString("en-IN", {
                 weekday: "long",
                 year: "numeric",
@@ -349,16 +824,22 @@ export default function ExpenseTracker() {
               })}
             </p>
           </div>
-          <button style={styles.addBtn} onClick={() => setView("add")}>
-            + Add Expense
-          </button>
+          <div style={s.headerRight}>
+            {/* ── Theme Toggle ── */}
+            <button style={s.toggleBtn} onClick={() => setDark((d) => !d)}>
+              <span>{t.toggleIcon}</span>
+              <span>{t.toggleLabel} Mode</span>
+            </button>
+            <button style={s.addBtn} onClick={() => setView("add")}>
+              + Add Expense
+            </button>
+          </div>
         </header>
 
-        {/* ════════════ DASHBOARD VIEW ════════════ */}
+        {/* ════ DASHBOARD ════ */}
         {view === "dashboard" && (
           <div className="fade-in">
-            {/* Stat Cards */}
-            <div style={styles.statsRow}>
+            <div style={s.statsRow}>
               {[
                 {
                   label: "Total Spent",
@@ -388,8 +869,8 @@ export default function ExpenseTracker() {
                   icon: "📊",
                   color: "#FFE66D",
                 },
-              ].map((s, i) => (
-                <div key={i} style={styles.statCard} className="stat-card">
+              ].map((stat, i) => (
+                <div key={i} style={s.statCard} className="stat-card">
                   <div
                     style={{
                       display: "flex",
@@ -398,27 +879,26 @@ export default function ExpenseTracker() {
                     }}
                   >
                     <div>
-                      <p style={styles.statLabel}>{s.label}</p>
-                      <p style={{ ...styles.statValue, color: s.color }}>
-                        {s.value}
+                      <p style={s.statLabel}>{stat.label}</p>
+                      <p style={{ ...s.statValue, color: stat.color }}>
+                        {stat.value}
                       </p>
-                      <p style={styles.statSub}>{s.sub}</p>
+                      <p style={s.statSub}>{stat.sub}</p>
                     </div>
                     <span
-                      style={{ ...styles.statIcon, background: s.color + "22" }}
+                      style={{ ...s.statIcon, background: stat.color + "22" }}
                     >
-                      {s.icon}
+                      {stat.icon}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Two-column row */}
-            <div style={styles.twoCol}>
+            <div style={s.twoCol}>
               {/* Category Breakdown */}
-              <div style={styles.card}>
-                <h2 style={styles.cardTitle}>Spending by Category</h2>
+              <div style={s.card}>
+                <h2 style={s.cardTitle}>Spending by Category</h2>
                 <div
                   style={{ display: "flex", flexDirection: "column", gap: 14 }}
                 >
@@ -436,7 +916,7 @@ export default function ExpenseTracker() {
                         >
                           <span
                             style={{
-                              color: "#CBD5E1",
+                              color: t.textBody,
                               fontSize: 13,
                               display: "flex",
                               alignItems: "center",
@@ -445,7 +925,7 @@ export default function ExpenseTracker() {
                           >
                             <span
                               style={{
-                                ...styles.catDot,
+                                ...s.catDot,
                                 background: meta.color + "22",
                                 color: meta.color,
                               }}
@@ -464,10 +944,10 @@ export default function ExpenseTracker() {
                             {formatINR(amt)}
                           </span>
                         </div>
-                        <div style={styles.barBg}>
+                        <div style={s.barBg}>
                           <div
                             style={{
-                              ...styles.barFill,
+                              ...s.barFill,
                               width: `${pct}%`,
                               background: `linear-gradient(90deg, ${meta.color}99, ${meta.color})`,
                             }}
@@ -480,7 +960,7 @@ export default function ExpenseTracker() {
               </div>
 
               {/* Recent Transactions */}
-              <div style={styles.card}>
+              <div style={s.card}>
                 <div
                   style={{
                     display: "flex",
@@ -489,11 +969,8 @@ export default function ExpenseTracker() {
                     marginBottom: 20,
                   }}
                 >
-                  <h2 style={styles.cardTitle}>Recent Transactions</h2>
-                  <button
-                    style={styles.linkBtn}
-                    onClick={() => setView("list")}
-                  >
+                  <h2 style={s.cardTitle}>Recent Transactions</h2>
+                  <button style={s.linkBtn} onClick={() => setView("list")}>
                     View all →
                   </button>
                 </div>
@@ -503,10 +980,10 @@ export default function ExpenseTracker() {
                   {recentExpenses.map((exp) => {
                     const meta = getCategoryMeta(exp.category);
                     return (
-                      <div key={exp.id} style={styles.txRow} className="tx-row">
+                      <div key={exp.id} style={s.txRow} className="tx-row">
                         <div
                           style={{
-                            ...styles.txIcon,
+                            ...s.txIcon,
                             background: meta.color + "22",
                             color: meta.color,
                           }}
@@ -514,8 +991,8 @@ export default function ExpenseTracker() {
                           {meta.icon}
                         </div>
                         <div style={{ flex: 1 }}>
-                          <p style={styles.txTitle}>{exp.title}</p>
-                          <p style={styles.txMeta}>
+                          <p style={s.txTitle}>{exp.title}</p>
+                          <p style={s.txMeta}>
                             {exp.category} ·{" "}
                             {new Date(exp.date).toLocaleDateString("en-IN", {
                               day: "numeric",
@@ -540,8 +1017,8 @@ export default function ExpenseTracker() {
             </div>
 
             {/* Monthly Bar Chart */}
-            <div style={styles.card}>
-              <h2 style={styles.cardTitle}>Monthly Overview — 2026</h2>
+            <div style={s.card}>
+              <h2 style={s.cardTitle}>Monthly Overview — 2026</h2>
               <div
                 style={{
                   display: "flex",
@@ -578,7 +1055,7 @@ export default function ExpenseTracker() {
                           minHeight: 4,
                           background: isCurrent
                             ? "linear-gradient(180deg,#A78BFA,#6D28D9)"
-                            : "#1E293B",
+                            : t.barMonthInactive,
                           boxShadow: isCurrent ? "0 0 10px #A78BFA55" : "none",
                           transition: "height 0.4s ease",
                         }}
@@ -587,7 +1064,7 @@ export default function ExpenseTracker() {
                       <span
                         style={{
                           fontSize: 9,
-                          color: isCurrent ? "#A78BFA" : "#475569",
+                          color: isCurrent ? "#A78BFA" : t.textDim,
                           fontWeight: isCurrent ? 700 : 400,
                         }}
                       >
@@ -601,21 +1078,20 @@ export default function ExpenseTracker() {
           </div>
         )}
 
-        {/* ════════════ ADD EXPENSE VIEW ════════════ */}
+        {/* ════ ADD EXPENSE ════ */}
         {view === "add" && (
           <div className="fade-in" style={{ maxWidth: 560 }}>
-            <div style={styles.card}>
-              <h2 style={styles.cardTitle}>Expense Details</h2>
+            <div style={s.card}>
+              <h2 style={s.cardTitle}>Expense Details</h2>
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 18 }}
               >
-                {/* Title */}
                 <div>
-                  <label style={styles.label}>Title *</label>
+                  <label style={s.label}>Title *</label>
                   <input
                     style={{
-                      ...styles.input,
-                      ...(errors.title ? styles.inputError : {}),
+                      ...s.input,
+                      ...(errors.title ? s.inputError : {}),
                     }}
                     placeholder="e.g. Coffee at Starbucks"
                     value={form.title}
@@ -623,19 +1099,18 @@ export default function ExpenseTracker() {
                       setForm((p) => ({ ...p, title: e.target.value }))
                     }
                   />
-                  {errors.title && <p style={styles.errText}>{errors.title}</p>}
+                  {errors.title && <p style={s.errText}>{errors.title}</p>}
                 </div>
 
-                {/* Amount */}
                 <div>
-                  <label style={styles.label}>Amount (₹) *</label>
+                  <label style={s.label}>Amount (₹) *</label>
                   <div style={{ position: "relative" }}>
-                    <span style={styles.inputPrefix}>₹</span>
+                    <span style={s.inputPrefix}>₹</span>
                     <input
                       style={{
-                        ...styles.input,
+                        ...s.input,
                         paddingLeft: 36,
-                        ...(errors.amount ? styles.inputError : {}),
+                        ...(errors.amount ? s.inputError : {}),
                       }}
                       placeholder="0.00"
                       type="number"
@@ -645,27 +1120,26 @@ export default function ExpenseTracker() {
                       }
                     />
                   </div>
-                  {errors.amount && (
-                    <p style={styles.errText}>{errors.amount}</p>
-                  )}
+                  {errors.amount && <p style={s.errText}>{errors.amount}</p>}
                 </div>
 
-                {/* Category Picker */}
                 <div>
-                  <label style={styles.label}>Category</label>
-                  <div style={styles.catGrid}>
+                  <label style={s.label}>Category</label>
+                  <div style={s.catGrid}>
                     {CATEGORIES.map((cat) => (
                       <button
                         key={cat.name}
                         style={{
-                          ...styles.catBtn,
+                          ...s.catBtn,
                           background:
                             form.category === cat.name
                               ? cat.color + "33"
-                              : "#0F172A",
-                          border: `1.5px solid ${form.category === cat.name ? cat.color : "#1E293B"}`,
+                              : t.inputBg,
+                          border: `1.5px solid ${form.category === cat.name ? cat.color : t.inputBorder}`,
                           color:
-                            form.category === cat.name ? cat.color : "#64748B",
+                            form.category === cat.name
+                              ? cat.color
+                              : t.textMuted,
                         }}
                         onClick={() =>
                           setForm((p) => ({ ...p, category: cat.name }))
@@ -680,28 +1154,23 @@ export default function ExpenseTracker() {
                   </div>
                 </div>
 
-                {/* Date */}
                 <div>
-                  <label style={styles.label}>Date *</label>
+                  <label style={s.label}>Date *</label>
                   <input
-                    style={{
-                      ...styles.input,
-                      ...(errors.date ? styles.inputError : {}),
-                    }}
+                    style={{ ...s.input, ...(errors.date ? s.inputError : {}) }}
                     type="date"
                     value={form.date}
                     onChange={(e) =>
                       setForm((p) => ({ ...p, date: e.target.value }))
                     }
                   />
-                  {errors.date && <p style={styles.errText}>{errors.date}</p>}
+                  {errors.date && <p style={s.errText}>{errors.date}</p>}
                 </div>
 
-                {/* Note */}
                 <div>
-                  <label style={styles.label}>Note (optional)</label>
+                  <label style={s.label}>Note (optional)</label>
                   <textarea
-                    style={{ ...styles.input, height: 72, resize: "none" }}
+                    style={{ ...s.input, height: 72, resize: "none" }}
                     placeholder="Any extra details..."
                     value={form.note}
                     onChange={(e) =>
@@ -710,7 +1179,7 @@ export default function ExpenseTracker() {
                   />
                 </div>
 
-                <button style={styles.submitBtn} onClick={handleAdd}>
+                <button style={s.submitBtn} onClick={handleAdd}>
                   Add Expense →
                 </button>
               </div>
@@ -718,19 +1187,18 @@ export default function ExpenseTracker() {
           </div>
         )}
 
-        {/* ════════════ ALL EXPENSES VIEW ════════════ */}
+        {/* ════ ALL EXPENSES ════ */}
         {view === "list" && (
           <div className="fade-in">
-            {/* Filter Bar */}
-            <div style={styles.filterBar}>
+            <div style={s.filterBar}>
               <input
-                style={{ ...styles.input, maxWidth: 240, marginBottom: 0 }}
+                style={{ ...s.input, maxWidth: 240, marginBottom: 0 }}
                 placeholder="🔍 Search expenses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <select
-                style={{ ...styles.input, maxWidth: 180, marginBottom: 0 }}
+                style={{ ...s.input, maxWidth: 180, marginBottom: 0 }}
                 value={filterCat}
                 onChange={(e) => setFilterCat(e.target.value)}
               >
@@ -740,7 +1208,7 @@ export default function ExpenseTracker() {
                 ))}
               </select>
               <select
-                style={{ ...styles.input, maxWidth: 160, marginBottom: 0 }}
+                style={{ ...s.input, maxWidth: 160, marginBottom: 0 }}
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
@@ -749,20 +1217,20 @@ export default function ExpenseTracker() {
                 <option value="title">Sort: Title</option>
               </select>
               <span
-                style={{ color: "#64748B", fontSize: 13, marginLeft: "auto" }}
+                style={{ color: t.textMuted, fontSize: 13, marginLeft: "auto" }}
               >
                 {filteredExpenses.length} result
                 {filteredExpenses.length !== 1 ? "s" : ""}
               </span>
             </div>
 
-            <div style={styles.card}>
+            <div style={s.card}>
               {filteredExpenses.length === 0 ? (
                 <div
                   style={{
                     textAlign: "center",
                     padding: "48px 0",
-                    color: "#475569",
+                    color: t.textDim,
                   }}
                 >
                   <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
@@ -777,16 +1245,16 @@ export default function ExpenseTracker() {
                         key={exp.id}
                         className="tx-row"
                         style={{
-                          ...styles.listRow,
+                          ...s.listRow,
                           borderBottom:
                             i < filteredExpenses.length - 1
-                              ? "1px solid #1E293B"
+                              ? `1px solid ${t.listRowBorder}`
                               : "none",
                         }}
                       >
                         <div
                           style={{
-                            ...styles.txIcon,
+                            ...s.txIcon,
                             background: meta.color + "22",
                             color: meta.color,
                             flexShrink: 0,
@@ -803,10 +1271,10 @@ export default function ExpenseTracker() {
                               flexWrap: "wrap",
                             }}
                           >
-                            <p style={styles.txTitle}>{exp.title}</p>
+                            <p style={s.txTitle}>{exp.title}</p>
                             <span
                               style={{
-                                ...styles.catTag,
+                                ...s.catTag,
                                 background: meta.color + "22",
                                 color: meta.color,
                               }}
@@ -817,7 +1285,7 @@ export default function ExpenseTracker() {
                           {exp.note && (
                             <p
                               style={{
-                                color: "#475569",
+                                color: t.textDim,
                                 fontSize: 12,
                                 margin: "2px 0 0",
                               }}
@@ -825,7 +1293,7 @@ export default function ExpenseTracker() {
                               {exp.note}
                             </p>
                           )}
-                          <p style={styles.txMeta}>
+                          <p style={s.txMeta}>
                             {new Date(exp.date).toLocaleDateString("en-IN", {
                               day: "numeric",
                               month: "long",
@@ -851,7 +1319,7 @@ export default function ExpenseTracker() {
                             -{formatINR(exp.amount)}
                           </span>
                           <button
-                            style={styles.deleteBtn}
+                            style={s.deleteBtn}
                             onClick={() => setDeleteId(exp.id)}
                           >
                             ✕
@@ -869,370 +1337,3 @@ export default function ExpenseTracker() {
     </div>
   );
 }
-
-/* ─────────────────────────────────────────
-   STYLES
-───────────────────────────────────────── */
-const styles = {
-  app: {
-    display: "flex",
-    minHeight: "100vh",
-    background: "#070B14",
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#E2E8F0",
-  },
-  sidebar: {
-    width: 240,
-    background: "#0B1120",
-    borderRight: "1px solid #1E293B",
-    display: "flex",
-    flexDirection: "column",
-    padding: "28px 16px",
-    position: "sticky",
-    top: 0,
-    height: "100vh",
-    gap: 8,
-  },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 32,
-    paddingLeft: 8,
-  },
-  logoIcon: { fontSize: 28 },
-  logoText: {
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#fff",
-    fontFamily: "'Playfair Display', serif",
-    letterSpacing: -0.5,
-  },
-  nav: { display: "flex", flexDirection: "column", gap: 4 },
-  navBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "10px 12px",
-    borderRadius: 10,
-    background: "transparent",
-    border: "none",
-    color: "#64748B",
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 500,
-    textAlign: "left",
-    transition: "all 0.2s",
-  },
-  navBtnActive: { background: "#1E293B", color: "#E2E8F0" },
-  navIcon: { fontSize: 16, width: 20 },
-  sidebarCard: {
-    marginTop: "auto",
-    background: "#0F172A",
-    borderRadius: 12,
-    padding: 16,
-    border: "1px solid #1E293B",
-  },
-  progressBar: {
-    height: 4,
-    background: "#1E293B",
-    borderRadius: 99,
-    marginTop: 10,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    background: "linear-gradient(90deg,#6EE7B7,#059669)",
-    borderRadius: 99,
-    transition: "width 0.6s ease",
-  },
-  main: { flex: 1, padding: "32px 36px", overflowY: "auto", maxWidth: "100%" },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 32,
-  },
-  pageTitle: {
-    margin: 0,
-    fontSize: 28,
-    fontWeight: 700,
-    color: "#fff",
-    fontFamily: "'Playfair Display', serif",
-    letterSpacing: -0.5,
-  },
-  pageSubtitle: { margin: "4px 0 0", color: "#475569", fontSize: 13 },
-  addBtn: {
-    background: "linear-gradient(135deg,#6D28D9,#A78BFA)",
-    border: "none",
-    borderRadius: 10,
-    padding: "10px 20px",
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-  },
-  statsRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4,1fr)",
-    gap: 16,
-    marginBottom: 24,
-  },
-  statCard: {
-    background: "#0B1120",
-    border: "1px solid #1E293B",
-    borderRadius: 16,
-    padding: 20,
-    transition: "transform 0.2s, border-color 0.2s",
-  },
-  statLabel: {
-    color: "#64748B",
-    fontSize: 12,
-    margin: "0 0 6px",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  statValue: {
-    fontSize: 22,
-    fontWeight: 700,
-    margin: "0 0 4px",
-    fontFamily: "'Playfair Display', serif",
-  },
-  statSub: { color: "#475569", fontSize: 11, margin: 0 },
-  statIcon: {
-    fontSize: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  twoCol: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 20,
-    marginBottom: 24,
-  },
-  card: {
-    background: "#0B1120",
-    border: "1px solid #1E293B",
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-  },
-  cardTitle: {
-    margin: "0 0 20px",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "#E2E8F0",
-  },
-  catDot: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 14,
-  },
-  barBg: {
-    height: 4,
-    background: "#1E293B",
-    borderRadius: 99,
-    overflow: "hidden",
-  },
-  barFill: { height: "100%", borderRadius: 99, transition: "width 0.6s ease" },
-  linkBtn: {
-    background: "none",
-    border: "none",
-    color: "#A78BFA",
-    cursor: "pointer",
-    fontSize: 13,
-    padding: 0,
-  },
-  txRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    padding: "10px 0",
-    cursor: "default",
-    transition: "all 0.15s",
-    borderRadius: 8,
-  },
-  txIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 18,
-    flexShrink: 0,
-  },
-  txTitle: { margin: 0, color: "#CBD5E1", fontSize: 13, fontWeight: 500 },
-  txMeta: { margin: "2px 0 0", color: "#475569", fontSize: 11 },
-  label: {
-    display: "block",
-    marginBottom: 6,
-    color: "#94A3B8",
-    fontSize: 12,
-    fontWeight: 500,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  input: {
-    width: "100%",
-    background: "#0F172A",
-    border: "1.5px solid #1E293B",
-    borderRadius: 10,
-    padding: "11px 14px",
-    color: "#E2E8F0",
-    fontSize: 14,
-    outline: "none",
-    boxSizing: "border-box",
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  inputError: { borderColor: "#FF6B6B" },
-  inputPrefix: {
-    position: "absolute",
-    left: 12,
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#64748B",
-    fontSize: 15,
-  },
-  errText: { color: "#FF6B6B", fontSize: 11, margin: "4px 0 0" },
-  catGrid: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 },
-  catBtn: {
-    border: "1.5px solid #1E293B",
-    borderRadius: 10,
-    padding: "10px 4px",
-    cursor: "pointer",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 4,
-    transition: "all 0.2s",
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  submitBtn: {
-    background: "linear-gradient(135deg,#6D28D9,#A78BFA)",
-    border: "none",
-    borderRadius: 12,
-    padding: "14px",
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: 600,
-    cursor: "pointer",
-    width: "100%",
-    letterSpacing: 0.3,
-  },
-  filterBar: {
-    display: "flex",
-    gap: 12,
-    marginBottom: 16,
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  listRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: 14,
-    padding: "14px 0",
-  },
-  catTag: {
-    fontSize: 11,
-    padding: "2px 8px",
-    borderRadius: 99,
-    fontWeight: 500,
-  },
-  deleteBtn: {
-    background: "#1E293B",
-    border: "none",
-    color: "#64748B",
-    cursor: "pointer",
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    fontSize: 12,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.2s",
-  },
-  toast: {
-    position: "fixed",
-    bottom: 24,
-    right: 24,
-    padding: "12px 20px",
-    borderRadius: 10,
-    fontSize: 13,
-    fontWeight: 600,
-    zIndex: 9999,
-    boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-    animation: "slideUp 0.3s ease",
-  },
-  modalOverlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.7)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9998,
-    backdropFilter: "blur(4px)",
-  },
-  modal: {
-    background: "#0B1120",
-    border: "1px solid #1E293B",
-    borderRadius: 20,
-    padding: "32px 40px",
-    textAlign: "center",
-    maxWidth: 320,
-  },
-  btnOutline: {
-    flex: 1,
-    background: "transparent",
-    border: "1.5px solid #334155",
-    borderRadius: 10,
-    padding: "10px",
-    color: "#94A3B8",
-    cursor: "pointer",
-    fontSize: 14,
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  btnDanger: {
-    flex: 1,
-    background: "#FF6B6B",
-    border: "none",
-    borderRadius: 10,
-    padding: "10px",
-    color: "#fff",
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 600,
-    fontFamily: "'DM Sans', sans-serif",
-  },
-};
-
-/* ─────────────────────────────────────────
-   GLOBAL CSS (injected via <style> tag)
-───────────────────────────────────────── */
-const globalStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
-  * { box-sizing: border-box; }
-  body { margin: 0; }
-  .fade-in { animation: fadeIn 0.35s ease; }
-  @keyframes fadeIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-  .stat-card:hover { transform: translateY(-2px); border-color: #334155 !important; }
-  .tx-row:hover { background: #0F172A; padding-left: 8px; padding-right: 8px; }
-  input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
-  select option { background: #0F172A; }
-  input::placeholder, textarea::placeholder { color: #334155; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #070B14; }
-  ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 99px; }
-`;
